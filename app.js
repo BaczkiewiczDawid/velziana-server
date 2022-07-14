@@ -1,51 +1,78 @@
 const express = require("express");
 const app = express();
 const cors = require("cors");
-const mysql = require("mysql");
+const mongoose = require("mongoose");
 const bodyParser = require("body-parser");
+const Reservations = require("./models/reservations");
 require("dotenv").config();
-
-const db = mysql.createPool({
-  host: process.env.DB_SERVER,
-  user: process.env.DB_USER,
-  password: process.env.DB_PASSWORD,
-  database: process.env.DB_NAME,
-});
 
 app.use(cors());
 app.use(express.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 
-app.post("/reservation", (req, res) => {
-  const data = req.body.data;
+const port = 5000;
 
-  const checkIsAvailable = `SELECT * FROM velziana_reservations WHERE date='${data.date}' AND time='${data.time}'`;
+const dbURI =
+  "mongodb+srv://dawson:Dawson22@reservations.5g3qx.mongodb.net/?retryWrites=true&w=majority";
 
-  const newReservation = `INSERT INTO velziana_reservations VALUES(null, '${data.date}', '${data.time}', 2)`;
+mongoose
+  .connect(dbURI, { useNewUrlParser: true, useUnifiedTopology: true })
+  .then((result) => {
+    app.listen(port);
+    console.log("connected to db");
+  })
+  .catch((err) => console.log(err));
 
-  db.query(checkIsAvailable, (err, result) => {
-    if (err) {
-      console.log(err);
-    } else {
-      console.log(result.length);
-      if (result.length === 0) {
-        db.query(newReservation, (err, result) => {
-          if (err) {
-            console.log(err);
-          } else {
-            res.send(result);
-            console.log(result);
-          }
-        });
-      } else {
-        res.send("Already reserved");
-      }
-    }
+app.get("/reservation", (req, res) => {
+  const reservations = new Reservations({
+    date: "14.07.2022",
+    time: "14:00 - 16:00",
+    table: 3,
   });
+
+  reservations
+    .save()
+    .then((result) => {
+      res.send(result);
+      console.log(result)
+    })
+    .catch((err) => {
+      console.log(err);
+    });
 });
+
+// app.get("/reservation", (req, res) => {
+//   const data = req.body.data;
+//   console.log('easd')
+
+//   const checkIsAvailable = `SELECT * FROM velziana_reservations WHERE date='${data.date}' AND time='${data.time}'`;
+
+//   const newReservation = `INSERT INTO velziana_reservations VALUES(null, '${data.date}', '${data.time}', 2)`;
+
+//   db.query(checkIsAvailable, (err, result) => {
+//     if (err) {
+//       console.log(err);
+//     } else {
+//       console.log(result.length);
+//       if (result.length === 0) {
+//         db.query(newReservation, (err, result) => {
+//           if (err) {
+//             console.log(err);
+//           } else {
+//             res.send(result);
+//             console.log(result);
+//           }
+//         });
+//       } else {
+//         res.send("Already reserved");
+//       }
+//     }
+//   });
+// });
 
 console.log("Server running...");
 
-const port = process.env.PORT || 5000;
+module.exports = app;
 
-app.listen(port);
+// const port = process.env.PORT || 5000;
+
