@@ -19,6 +19,9 @@
   "homepage": "https://github.com/BaczkiewiczDawid/velziana-server#readme",
   "dependencies": {
     "dotenv": "^16.0.1",
-    "nodemon": "^2.0.19"
+    "mongoose": "^6.4.4",
+    "nodemon": "^2.0.19",
+    "pg": "^8.7.3",
+    "psql": "^0.0.1"
   }
 }
