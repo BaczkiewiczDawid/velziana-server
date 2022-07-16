@@ -13,7 +13,7 @@ app.use(bodyParser.urlencoded({ extended: true }));
 
 const dbURI = process.env.DB_URI;
 
-console.log(dbURI)
+console.log(dbURI);
 
 mongoose
   .connect(dbURI, { useNewUrlParser: true, useUnifiedTopology: true })
@@ -31,15 +31,23 @@ app.post("/reservation", (req, res) => {
     table: 3,
   });
 
-  reservations
-    .save()
+  Reservations.find({ date: data.date, time: data.time, table: data.table })
     .then((result) => {
-      res.send(result);
-      console.log(result)
+      if (result.length !== 0) {
+        console.log('Already reserved')
+      } else {
+        reservations
+          .save()
+          .then((result) => {
+            res.send(result);
+            console.log(result);
+          })
+          .catch((err) => {
+            console.log(err);
+          });
+      }
     })
-    .catch((err) => {
-      console.log(err);
-    });
+    .catch((err) => console.log(err));
 });
 
 const port = process.env.PORT || 3001;
