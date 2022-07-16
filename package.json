@@ -20,6 +20,7 @@
   "dependencies": {
     "dotenv": "^16.0.1",
     "mongoose": "^6.4.4",
+    "node": "^16.14.2",
     "nodemon": "^2.0.19",
     "pg": "^8.7.3",
     "psql": "^0.0.1"
