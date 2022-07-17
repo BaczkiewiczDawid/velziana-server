@@ -4,6 +4,7 @@ const cors = require("cors");
 const bodyParser = require("body-parser");
 const mongoose = require("mongoose");
 const Reservations = require("./models/reservations");
+const CartItems = require("./models/cartItems");
 
 require("dotenv").config();
 
@@ -47,6 +48,22 @@ app.post("/reservation", (req, res) => {
       }
     })
     .catch((err) => console.log(err));
+});
+
+app.post("/new-order", (req, res) => {
+  const data = req.body.data;
+
+  data.id.forEach((el) => {
+    const cartItems = new CartItems({
+      itemID: el,
+      orderID: data.orderID,
+      client: data.client,
+    });
+
+    cartItems.save();
+  });
+
+  res.send('Success')
 });
 
 const port = process.env.PORT || 3001;
