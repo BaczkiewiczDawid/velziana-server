@@ -28,19 +28,18 @@ app.post("/reservation", (req, res) => {
   const reservations = new Reservations({
     date: data.date,
     time: data.time,
-    table: 3,
+    table: data.table,
   });
 
   Reservations.find({ date: data.date, time: data.time, table: data.table })
     .then((result) => {
       if (result.length !== 0) {
-        console.log('Already reserved')
+        res.send('Already reserved')
       } else {
         reservations
           .save()
           .then((result) => {
             res.send(result);
-            console.log(result);
           })
           .catch((err) => {
             console.log(err);
