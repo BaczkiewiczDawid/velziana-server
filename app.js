@@ -30,12 +30,14 @@ app.post("/reservation", (req, res) => {
     date: data.date,
     time: data.time,
     table: data.table,
+    orderID: data.orderID,
+    client: data.client,
   });
 
   Reservations.find({ date: data.date, time: data.time, table: data.table })
     .then((result) => {
       if (result.length !== 0) {
-        res.send('Already reserved')
+        res.send("Already reserved");
       } else {
         reservations
           .save()
@@ -63,7 +65,42 @@ app.post("/new-order", (req, res) => {
     cartItems.save();
   });
 
-  res.send('Success')
+  res.send("Success");
+});
+
+app.post("/orders-list", (req, res) => {
+  const data = req.body.data;
+
+  let orderDetails = [];
+  let dishes = [];
+
+  let orderID;
+
+  Reservations.find({ client: data }).then((result) => {
+    orderID = result[0].orderID;
+
+    result.map((el) => {
+      orderDetails.push({
+        client: el.client,
+        date: el.date,
+        time: el.time,
+        table: el.table,
+        orderID: el.orderID,
+        dishes: dishes.filter((dish) => dish.orderID === el.orderID),
+      });
+    });
+
+    res.send(orderDetails);
+  });
+
+  CartItems.find({ client: data }).then((cartResult) => {
+      cartResult.map((el) => {
+        dishes.push({
+          itemID: el.itemID,
+          orderID: el.orderID,
+        })
+      })
+  });
 });
 
 const port = process.env.PORT || 3001;
