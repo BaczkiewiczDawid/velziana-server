@@ -77,7 +77,9 @@ app.post("/orders-list", (req, res) => {
   let orderID;
 
   Reservations.find({ client: data }).then((result) => {
-    orderID = result[0].orderID;
+    if (result) {
+      orderID = result[0].orderID;
+    }
 
     result.map((el) => {
       orderDetails.push({
