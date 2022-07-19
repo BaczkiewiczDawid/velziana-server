@@ -60,6 +60,7 @@ app.post("/new-order", (req, res) => {
       itemID: el,
       orderID: data.orderID,
       client: data.client,
+      totalPrice: parseFloat(data.totalPrice)
     });
 
     cartItems.save();
@@ -100,6 +101,7 @@ app.post("/orders-list", (req, res) => {
         dishes.push({
           itemID: el.itemID,
           orderID: el.orderID,
+          totalPrice: el.totalPrice
         })
       })
   });

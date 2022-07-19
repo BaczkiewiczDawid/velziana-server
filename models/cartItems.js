@@ -13,6 +13,10 @@ const cartItemsSchema = new Schema({
     client: {
         type: String,
         required: true,
+    },
+    totalPrice: {
+        type: Number,
+        required: true,
     }
   }, { timestamps: true });
   
